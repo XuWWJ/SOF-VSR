@@ -13,19 +13,19 @@ class TrainsetLoader(Dataset):
         self.upscale_factor = upscale_factor
         self.patch_size = patch_size
         self.n_iters = n_iters
-        self.video_list = os.listdir(trainset_dir)
+        self.video_list = os.listdir(trainset_dir+ '/' +'SDR_540p/')
     def __getitem__(self, idx):
         idx_video = random.randint(0, self.video_list.__len__()-1)
-        idx_frame = random.randint(0, 28)
-        lr_dir = self.trainset_dir + '/' + self.video_list[idx_video]  + '/lr_x' + str(self.upscale_factor) + '_BI'
-        hr_dir = self.trainset_dir + '/' + self.video_list[idx_video]  + '/hr'
+        idx_frame = random.randint(10, 97)
+        lr_dir = self.trainset_dir + '/' +'SDR_540p/'+ self.video_list[idx_video]  
+        hr_dir = self.trainset_dir + '/' +'SDR_4K/'+ self.video_list[idx_video]  
         # read HR & LR frames
-        LR0 = Image.open(lr_dir + '/lr' + str(idx_frame) + '.png')
-        LR1 = Image.open(lr_dir + '/lr' + str(idx_frame + 1) + '.png')
-        LR2 = Image.open(lr_dir + '/lr' + str(idx_frame + 2) + '.png')
-        HR0 = Image.open(hr_dir + '/hr' + str(idx_frame) + '.png')
-        HR1 = Image.open(hr_dir + '/hr' + str(idx_frame + 1) + '.png')
-        HR2 = Image.open(hr_dir + '/hr' + str(idx_frame + 2) + '.png')
+        LR0 = Image.open(lr_dir + '/00' + str(idx_frame) + '.jpg')
+        LR1 = Image.open(lr_dir + '/00' + str(idx_frame + 1) + '.jpg')
+        LR2 = Image.open(lr_dir + '/00' + str(idx_frame + 2) + '.jpg')
+        HR0 = Image.open(hr_dir + '/00' + str(idx_frame) + '.jpg')
+        HR1 = Image.open(hr_dir + '/00' + str(idx_frame + 1) + '.jpg')
+        HR2 = Image.open(hr_dir + '/00' + str(idx_frame + 2) + '.jpg')
 
         LR0 = np.array(LR0, dtype=np.float32) / 255.0
         LR1 = np.array(LR1, dtype=np.float32) / 255.0
@@ -64,12 +64,12 @@ class TestsetLoader(Dataset):
         super(TestsetLoader).__init__()
         self.dataset_dir = dataset_dir
         self.upscale_factor = upscale_factor
-        self.frame_list = os.listdir(self.dataset_dir + '/lr_x' + str(self.upscale_factor))
+        self.frame_list = os.listdir(self.dataset_dir)
     def __getitem__(self, idx):
-        dir = self.dataset_dir + '/lr_x' + str(self.upscale_factor)
-        LR0 = Image.open(dir + '/' + 'lr_' + str(idx+1).rjust(2, '0') + '.png')
-        LR1 = Image.open(dir + '/' + 'lr_' + str(idx+2).rjust(2, '0') + '.png')
-        LR2 = Image.open(dir + '/' + 'lr_' + str(idx+3).rjust(2, '0') + '.png')
+        dir = self.dataset_dir 
+        LR0 = Image.open(dir + '/' + 'lr_' + str(idx+1).rjust(4, '0') + '.png')
+        LR1 = Image.open(dir + '/' + 'lr_' + str(idx+2).rjust(4, '0') + '.png')
+        LR2 = Image.open(dir + '/' + 'lr_' + str(idx+3).rjust(4, '0') + '.png')
         W, H = LR1.size
         # H and W should be divisible by 2
         W = int(W // 2) * 2
