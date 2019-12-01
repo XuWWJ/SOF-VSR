@@ -13,11 +13,11 @@ import matplotlib.pyplot as plt
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--upscale_factor", type=int, default=4)
-    parser.add_argument('--gpu_mode', type=bool, default=False)
-    parser.add_argument('--patch_size', type=int, default=32)
+    parser.add_argument('--gpu_mode', type=bool, default=True)
+    parser.add_argument('--patch_size', type=int, default=80)
     parser.add_argument('--batch_size', type=int, default=16)
     parser.add_argument('--n_iters', type=int, default=300000, help='number of iterations to train')
-    parser.add_argument('--trainset_dir', type=str, default='data/train')
+    parser.add_argument('--trainset_dir', type=str, default='/home/xuwenjie/data')
     return parser.parse_args()
 
 def main(cfg):
@@ -31,6 +31,7 @@ def main(cfg):
     train_loader = DataLoader(train_set, num_workers=4, batch_size=cfg.batch_size, shuffle=True)
 
     # train
+    net.load_state_dict(torch.load("log/BI_x4_iter35100.pth"))
     optimizer = torch.optim.Adam(net.parameters(), lr=1e-4)
     criterion_L2 = torch.nn.MSELoss()
     if use_gpu:
@@ -68,7 +69,7 @@ def main(cfg):
         optimizer.step()
 
         # save checkpoint
-        if idx_iter % 5000 == 0:
+        if idx_iter % 100 == 0:
             print('Iteration---%6d,   loss---%f' % (idx_iter + 1, np.array(loss_list).mean()))
             torch.save(net.state_dict(), 'log/BI_x' + str(cfg.upscale_factor) + '_iter' + str(idx_iter) + '.pth')
             loss_list = []
